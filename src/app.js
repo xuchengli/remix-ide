@@ -49,69 +49,7 @@ var PluginAPI = require('./app/plugin/pluginAPI')
 var styleGuide = require('./app/ui/styles-guide/theme-chooser')
 var styles = styleGuide.chooser()
 
-var css = csjs`
-  html { box-sizing: border-box; }
-  *, *:before, *:after { box-sizing: inherit; }
-  body                 {
-    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin             : 0;
-    padding            : 0;
-    font-size          : 12px;
-    color              : ${styles.leftPanel.text_Primary};
-    font-weight        : normal;
-  }
-  pre {
-    overflow-x: auto;
-  }
-  .browsersolidity     {
-    position           : relative;
-    width              : 100vw;
-    height             : 100vh;
-    overflow           : hidden;
-  }
-  .centerpanel         {
-    background-color  : ${styles.colors.transparent};
-    display            : flex;
-    flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
-    overflow           : hidden;
-  }
-  .leftpanel           {
-    background-color  : ${styles.leftPanel.backgroundColor_Panel};
-    display            : flex;
-    flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    bottom             : 0;
-    left               : 0;
-    overflow           : hidden;
-  }
-  .rightpanel          {
-    background-color  : ${styles.rightPanel.backgroundColor_Panel};
-    display            : flex;
-    flex-direction     : column;
-    position           : absolute;
-    top                : 0;
-    right              : 0;
-    bottom             : 0;
-    overflow           : hidden;
-  }
-  .highlightcode {
-    position:absolute;
-    z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
-  }
-  .highlightcode_fullLine {
-    position:absolute;
-    z-index:20;
-    background-color: ${styles.editor.backgroundColor_DebuggerMode};
-    opacity: 0.5;
-  }
-`
-
-class App {
+module.exports = class App {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
     self._api = {}
@@ -205,8 +143,6 @@ class App {
     return self._view.el
   }
 }
-
-module.exports = App
 
 function run () {
   var self = this
@@ -954,7 +890,70 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   })
 
   function startdebugging (txHash) {
-    self.event.trigger('debuggingRequested', [])
+    self._components.righthandpanel.showDebugger()
     transactionDebugger.debug(txHash)
   }
 }
+
+
+const css = csjs`
+  html { box-sizing: border-box; }
+  *, *:before, *:after { box-sizing: inherit; }
+  body                 {
+    font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin             : 0;
+    padding            : 0;
+    font-size          : 12px;
+    color              : ${styles.leftPanel.text_Primary};
+    font-weight        : normal;
+  }
+  pre {
+    overflow-x: auto;
+  }
+  .browsersolidity     {
+    position           : relative;
+    width              : 100vw;
+    height             : 100vh;
+    overflow           : hidden;
+  }
+  .centerpanel         {
+    background-color  : ${styles.colors.transparent};
+    display            : flex;
+    flex-direction     : column;
+    position           : absolute;
+    top                : 0;
+    bottom             : 0;
+    overflow           : hidden;
+  }
+  .leftpanel           {
+    background-color  : ${styles.leftPanel.backgroundColor_Panel};
+    display            : flex;
+    flex-direction     : column;
+    position           : absolute;
+    top                : 0;
+    bottom             : 0;
+    left               : 0;
+    overflow           : hidden;
+  }
+  .rightpanel          {
+    background-color  : ${styles.rightPanel.backgroundColor_Panel};
+    display            : flex;
+    flex-direction     : column;
+    position           : absolute;
+    top                : 0;
+    right              : 0;
+    bottom             : 0;
+    overflow           : hidden;
+  }
+  .highlightcode {
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+  }
+  .highlightcode_fullLine {
+    position:absolute;
+    z-index:20;
+    background-color: ${styles.editor.backgroundColor_DebuggerMode};
+    opacity: 0.5;
+  }
+`
