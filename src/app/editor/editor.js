@@ -169,13 +169,17 @@ function Editor (opts = {}) {
     switchSession(path)
   }
 
+  this.currentContent = function () {
+    return this.get(this.current())
+  }
+
   this.get = function (path) {
     if (currentSession === path) {
       return editor.getValue()
     }
   }
 
-  this.current = function (path) {
+  this.current = function () {
     if (editor.getSession() === emptySession) {
       return
     }

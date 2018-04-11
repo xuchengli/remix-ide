@@ -172,7 +172,7 @@ function makeRecorder (events, appAPI, appEvents, opts) {
     })
   }
   runButton.onclick = () => {
-    var currentFile = appAPI.config.get('currentFile')
+    var currentFile = opts.config.get('currentFile')
     appAPI.fileProviderOf(currentFile).get(currentFile, (error, json) => {
       if (error) {
         modalDialogCustom.alert('Invalid Scenario File ' + error)
@@ -248,7 +248,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
         </div>
         <div class="${css.button}">
           ${atAddressButtonInput}
-          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(appAPI) }}>At Address</div>
+          <div class="${css.atAddress}" onclick=${function () { loadFromAddress(opts.editor, opts.config) }}>At Address</div>
         </div>
       </div>
     </div>
@@ -312,7 +312,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
     })
   }
 
-  function loadFromAddress (appAPI) {
+  function loadFromAddress (editor, config) {
     noInstancesText.style.display = 'none'
     var contractNames = document.querySelector(`.${css.contractNames.classNames[0]}`)
     var address = atAddressButtonInput.value
@@ -322,11 +322,11 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
     if (/[a-f]/.test(address) && /[A-F]/.test(address) && !ethJSUtil.isValidChecksumAddress(address)) {
       return modalDialogCustom.alert('Invalid checksum address.')
     }
-    if (/.(.abi)$/.exec(appAPI.currentFile())) {
+    if (/.(.abi)$/.exec(config.get('currentFile'))) {
       modalDialogCustom.confirm(null, 'Do you really want to interact with ' + address + ' using the current ABI definition ?', () => {
         var abi
         try {
-          abi = JSON.parse(appAPI.editorContent())
+          abi = JSON.parse(editor.currentContent())
         } catch (e) {
           return modalDialogCustom.alert('Failed to parse the current file as JSON ABI.')
         }
