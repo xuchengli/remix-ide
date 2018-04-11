@@ -121,14 +121,14 @@ function SettingsTab (appAPI = {}, appEvents = {}, opts = {}) {
     setVersionText(version, el)
   })
 
-  optionVM.checked = appAPI.config.get('settings/always-use-vm') || false
+  optionVM.checked = opts.config.get('settings/always-use-vm') || false
   optionVM.addEventListener('change', event => {
-    appAPI.config.set('settings/always-use-vm', !appAPI.config.get('settings/always-use-vm'))
+    opts.config.set('settings/always-use-vm', !opts.config.get('settings/always-use-vm'))
   })
 
-  personal.checked = appAPI.config.get('settings/personal-mode') || false
+  personal.checked = opts.config.get('settings/personal-mode') || false
   personal.addEventListener('change', event => {
-    appAPI.config.set('settings/personal-mode', !appAPI.config.get('settings/personal-mode'))
+    opts.config.set('settings/personal-mode', !opts.config.get('settings/personal-mode'))
   })
 
   var optimize = el.querySelector('#optimize')
