@@ -1,4 +1,5 @@
 'use strict'
+var executionContext = require('../../execution-context')
 /**
  * Register and Manage plugin:
  *
@@ -95,6 +96,16 @@ class PluginManager {
           ]
         }))
       }
+    })
+
+    events.txlistener.register('newTransaction', (tx) => {
+      if (executionContext.getProvider() !== 'vm') return
+      this.post(this.inFocus, JSON.stringify({
+        action: 'notification',
+        key: 'txlistener',
+        type: 'newTransaction',
+        value: [tx]
+      }))
     })
 
     events.app.register('tabChanged', (tabName) => {
