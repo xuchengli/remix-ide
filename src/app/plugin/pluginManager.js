@@ -80,7 +80,7 @@ class PluginManager {
     var self = this
     this.plugins = {}
     this.inFocus
-    var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
+    // var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
     events.compiler.register('compilationFinished', (success, data, source) => {
       if (this.inFocus) {
         // trigger to the current focus
@@ -139,12 +139,13 @@ class PluginManager {
       if (event.type === 'message' && this.inFocus && this.plugins[this.inFocus] && this.plugins[this.inFocus].origin === event.origin) {
         var data = JSON.parse(event.data)
         data.value.unshift(this.inFocus)
-        if (allowedapi[data.type]) {
-          data.value.push((error, result) => {
-            response(data.key, data.type, data.id, error, result)
-          })
-          api[data.key][data.type].apply({}, data.value)
-        }
+        // if (allowedapi[data.type]) {
+        // allowing everything for now
+        data.value.push((error, result) => {
+          response(data.key, data.type, data.id, error, result)
+        })
+        api[data.key][data.type].apply({}, data.value)
+        // }
       }
     }, false)
   }
