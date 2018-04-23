@@ -127,12 +127,15 @@ class PluginManager {
           value: []
         }))
         this.inFocus = tabName
+        api.compiler.getCompilationResult(tabName, (error, data) => {
+          if (!error) return
         this.post(tabName, JSON.stringify({
           action: 'notification',
           key: 'compiler',
           type: 'compilationData',
-          value: [api.compiler.getCompilationResult()]
+            value: [data]
         }))
+        })
       }
     })
 
