@@ -80,6 +80,7 @@ class PluginManager {
   constructor (api = {}, events = {}, opts = {}) {
     var self = this
     this.plugins = {}
+    this.origins = {}
     this.inFocus
     // var allowedapi = {'setConfig': 1, 'getConfig': 1, 'removeConfig': 1}
     events.compiler.register('compilationFinished', (success, data, source) => {
@@ -100,7 +101,7 @@ class PluginManager {
 
     events.txlistener.register('newTransaction', (tx) => {
       if (executionContext.getProvider() !== 'vm') return
-      this.post(this.inFocus, JSON.stringify({
+      this.broadcast(JSON.stringify({
         action: 'notification',
         key: 'txlistener',
         type: 'newTransaction',
@@ -129,19 +130,21 @@ class PluginManager {
         this.inFocus = tabName
         api.compiler.getCompilationResult(tabName, (error, data) => {
           if (!error) return
-        this.post(tabName, JSON.stringify({
-          action: 'notification',
-          key: 'compiler',
-          type: 'compilationData',
+          this.post(tabName, JSON.stringify({
+            action: 'notification',
+            key: 'compiler',
+            type: 'compilationData',
             value: [data]
-        }))
+          }))
         })
       }
     })
 
     window.addEventListener('message', (event) => {
+      if (!this.origins[event.origin]) return
+
       function response (key, type, callid, error, result) {
-        self.post(self.inFocus, JSON.stringify({
+        self.postToOrigin(event.origin, JSON.stringify({
           id: callid,
           action: 'response',
           key: key,
@@ -165,6 +168,17 @@ class PluginManager {
   }
   register (desc, content) {
     this.plugins[desc.title] = {content, origin: desc.url}
+    this.origins[desc.url] = desc.title
+  }
+  broadcast (value) {
+    for (var plugin in this.plugins) {
+      this.post(plugin, value)
+    }
+  }
+  postToOrigin (origin, value) {
+    if (this.origins[origin]) {
+      this.post(this.origins[origin], value)
+    }
   }
   post (name, value) {
     if (this.plugins[name]) {
