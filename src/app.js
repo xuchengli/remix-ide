@@ -775,7 +775,9 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
     udapp: udapp,
     udappUI: udappUI,
     compiler: compiler,
-    renderer: renderer
+    renderer: renderer,
+    fileManager: fileManager,
+    filePanel: filePanel
   }
 
   self._components.righthandpanel = new RighthandPanel(rhpAPI, rhpEvents, rhpOpts)

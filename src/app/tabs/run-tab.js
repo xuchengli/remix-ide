@@ -279,8 +279,10 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
     }
 
     var constructor = txHelper.getConstructorInterface(selectedContract.contract.object.abi)
-    txFormat.buildData(selectedContract.name, selectedContract.contract.object, opts.compiler.getContracts(), true, constructor, args, (error, data) => {
-      if (!error) {
+    opts.filePanel.compilerMetadata().metadataOf(selectedContract.name, (error, librariesAddresses) => {
+      if (error) return appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
+      txFormat.encodeConstructorCallAndLinkLibraries(selectedContract.contract.object, constructor, args, librariesAddresses.linkReferences, selectedContract.contract.object.evm.bytecode.linkReferences, (error, data) => {
+        if (error) return appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
         appAPI.logMessage(`creation of ${selectedContract.name} pending...`)
         opts.udapp.createContract(data, (error, txResult) => {
           if (!error) {
@@ -299,14 +301,7 @@ function contractDropdown (events, appAPI, appEvents, opts, instanceContainer) {
             appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
           }
         })
-      } else {
-        appAPI.logMessage(`creation of ${selectedContract.name} errored: ` + error)
-      }
-    }, (msg) => {
-      appAPI.logMessage(msg)
-    }, (data, runTxCallback) => {
-      // called for libraries deployment
-      opts.udapp.runTx(data, runTxCallback)
+      })
     })
   }
 
