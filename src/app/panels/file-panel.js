@@ -2,6 +2,7 @@
 var async = require('async')
 var $ = require('jquery')
 var yo = require('yo-yo')
+var CompilerMetadata = require('../files/compiler-metadata')
 var minixhr = require('minixhr')  // simple and small cross-browser XMLHttpRequest (XHR)
 var remixLib = require('remix-lib')
 var EventManager = remixLib.EventManager
@@ -38,7 +39,7 @@ var ghostbar = yo`<div class=${css.ghostbar}></div>`
       - call fileProvider API
 */
 
-function filepanel (appAPI, filesProvider) {
+function filepanel (appAPI, filesProvider, opts) {
   var self = this
   var fileExplorer = new FileExplorer(appAPI, filesProvider['browser'])
   var fileSystemExplorer = new FileExplorer(appAPI, filesProvider['localhost'])
@@ -46,6 +47,18 @@ function filepanel (appAPI, filesProvider) {
   var githubExplorer = new FileExplorer(appAPI, filesProvider['github'])
   var gistExplorer = new FileExplorer(appAPI, filesProvider['gist'])
   var configExplorer = new FileExplorer(appAPI, filesProvider['config'])
+
+  // ----------------- editor panel ----------------------
+  self._compilerMetadata = new CompilerMetadata(
+    {
+      compiler: opts.compiler.event
+    },
+    {
+      fileManager: opts.fileManager,
+      compiler: opts.compiler
+    }
+  )
+  self._compilerMetadata.syncContractMetadata()
 
   var dragbar = yo`<div onmousedown=${mousedown} class=${css.dragbar}></div>`
 

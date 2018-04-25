@@ -85,6 +85,14 @@ class FileManager {
     this.refreshTabs()
   }
 
+  currentFileProvider () {
+    var path = this.currentPath()
+    if (path) {
+      return this.fileProviderOf(path)
+    }
+    return null
+  }
+
   currentPath () {
     var currentFile = this.opt.config.get('currentFile')
     var reg = /(.*\/).*/

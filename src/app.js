@@ -549,6 +549,7 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
   var config = self._api.config
   var filesProviders = self._api.filesProviders
 
+  // ----------------- file manager ----------------------------
   var fileManager = new FileManager({
     config: config,
     editor: editor,
@@ -633,7 +634,10 @@ Please make a backup of your contracts and start using http://remix.ethereum.org
       editor.setText(text)
     }
   }
-  var filePanel = new FilePanel(FilePanelAPI, filesProviders)
+  var filePanel = new FilePanel(FilePanelAPI, filesProviders, {
+    compiler: compiler,
+    fileManager: fileManager
+  })
 
   // TODO this should happen inside file-panel.js
   var filepanelContainer = document.querySelector('#filepanel')
