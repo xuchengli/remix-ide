@@ -1,0 +1,8 @@
+# Build directory
+build
+
+# Dependency directory
+node_modules
+
+# Remix setup directory
+remix
