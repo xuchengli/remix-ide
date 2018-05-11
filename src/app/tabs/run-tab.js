@@ -25,6 +25,7 @@ var noInstancesText = yo`<div class="${css.noInstancesText}">0 contract Instance
 var pendingTxsText = yo`<span>0 pending transactions</span>`
 
 var net = yo`<span class=${css.network}></span>`
+var detectNetworkTimeout
 
 function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   var container = yo`<div class="${css.runTabView}" id="runTabView" ></div>`
@@ -71,7 +72,6 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   })
   // --------------- baas -----------------
   fillEnvironmentList(appAPI, opts, el, event)
-  // fillAccountsList(appAPI, opts, el)
   setInterval(() => {
     updateAccountBalances(container, appAPI)
     updatePendingTxs(container, appAPI)
@@ -84,25 +84,47 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
   })
   return { render () { return container } }
 }
+/**
+ * 检查网络连接状态
+**/
+function detectNetwork () {
+  executionContext.detectNetwork((err, { id, name } = {}) => {
+    if (err) {
+      modalDialogCustom.alert(err)
+      net.innerHTML = `<i class="${css.networkItem} fa fa-ban ${css.errorIcon}"></i>`
+    } else {
+      net.innerHTML = `<i class="${css.networkItem} fa fa-plug ${css.successIcon}"></i> (${id || '-'})`
+    }
+    detectNetworkTimeout = setTimeout(detectNetwork, 5000)
+  })
+}
+/**
+ * 切换不同的网络环境
+**/
 function setNetwork (endpoint, appAPI, opts, el, event) {
+  if (detectNetworkTimeout) {
+    clearTimeout(detectNetworkTimeout)
+  }
+  const selectExEnv = el.querySelector('#selectExEnvOptions')
+  selectExEnv.blur()
+  selectExEnv.setAttribute('disabled', true)
+  net.innerHTML = `<i class="${css.networkItem} fa fa-spinner fa-pulse"></i>`
+
   executionContext.setProviderFromEndpoint(endpoint, 'web3', (alertMsg) => {
     if (alertMsg) {
       modalDialogCustom.alert(alertMsg)
-    }
-    fillAccountsList(appAPI, opts, el)
-    event.trigger('clearInstance', [])
-  })
-}
-function updateNetwork () {
-  executionContext.detectNetwork((err, { id, name } = {}) => {
-    if (err) {
-      console.error(err)
-      net.innerHTML = 'can\'t detect network '
+      net.innerHTML = `<i class="${css.networkItem} fa fa-exclamation-triangle ${css.errorIcon}"></i>`
     } else {
-      net.innerHTML = `<i class="${css.networkItem} fa fa-plug" aria-hidden="true"></i> (${id || '-'})`
+      detectNetwork()
+      fillAccountsList(appAPI, opts, el)
+      event.trigger('clearInstance', [])
     }
+    selectExEnv.removeAttribute('disabled')
   })
 }
+/**
+ * 从baas获取当前用户接入的测试网络
+**/
 function fillEnvironmentList (appAPI, opts, el, event) {
   const apiToken = appAPI.getAPIToken()
   const selectExEnv = el.querySelector('#selectExEnvOptions')
@@ -125,7 +147,6 @@ function fillEnvironmentList (appAPI, opts, el, event) {
             $(selectExEnv).append($('<option />').val(e.httpRPC).text(e.network))
           }
           setNetwork(env[0].httpRPC, appAPI, opts, el, event)
-          setInterval(updateNetwork, 5000)
         } else {
           modalDialogCustom.alert('Need to join network first.')
         }
@@ -137,6 +158,9 @@ function fillEnvironmentList (appAPI, opts, el, event) {
     modalDialogCustom.alert('Need API token.')
   }
 }
+/**
+ * 获取账户信息
+**/
 function fillAccountsList (appAPI, opts, container) {
   var $txOrigin = $(container.querySelector('#txorigin'))
   $txOrigin.empty()
@@ -150,7 +174,9 @@ function fillAccountsList (appAPI, opts, container) {
     }
   })
 }
-
+/**
+ * 获取账户余额
+**/
 function updateAccountBalances (container, appAPI) {
   var accounts = $(container.querySelector('#txorigin')).children('option')
   accounts.each(function (index, value) {
@@ -408,8 +434,7 @@ function settings (container, appAPI, appEvents, opts) {
         </div>
         <div class=${css.environment}>
           ${net}
-          <select id="selectExEnvOptions" onchange=${updateNetwork} class="${css.select}">
-          </select>
+          <select id="selectExEnvOptions" class="${css.select}"></select>
           <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md" target="_blank"><i class="${css.icon} fa fa-info"></i></a>
         </div>
       </div>
@@ -424,11 +449,11 @@ function settings (container, appAPI, appEvents, opts) {
         <input type="number" class="${css.col2}" id="gasLimit" value="3000000">
       </div>
       <div class="${css.crow}" style="display: none">
-      <div class="${css.col1_1}">Gas Price</div>
+        <div class="${css.col1_1}">Gas Price</div>
         <input type="number" class="${css.col2}" id="gasPrice" value="0">
       </div>
       <div class="${css.crow}">
-      <div class="${css.col1_1}">Value</div>
+        <div class="${css.col1_1}">Value</div>
         <input type="text" class="${css.col2_1}" id="value" value="0" title="Enter the value and choose the unit">
         <select name="unit" class="${css.col2_2}" id="unit">
           <option data-unit="wei">wei</option>

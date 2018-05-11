@@ -157,6 +157,10 @@ var css = csjs`
     color: ${styles.appProperties.errorText_Color};
     margin-left: 15px;
   }
+  .successIcon {
+    color: ${styles.appProperties.specialText_Color};
+    margin-left: 15px;
+  }
   .failDesc {
     color: ${styles.appProperties.errorText_Color};
     padding-left: 10px;
