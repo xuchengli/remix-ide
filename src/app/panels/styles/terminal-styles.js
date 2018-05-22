@@ -66,7 +66,7 @@ var css = csjs`
     padding-bottom    : 3px;
     overflow-y        : auto;
     font-family       : monospace;
-    background-image  : ${styles.terminal.backgroundImage_Terminal};
+    // background-image  : ${styles.terminal.backgroundImage_Terminal};
     opacity           : 0.1;
     top               : 15%;
     left              : 33%;
