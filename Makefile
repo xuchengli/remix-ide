@@ -1,8 +1,15 @@
+GREEN := $(shell tput -Txterm setaf 2)
+
 REMIX-IDE-IMAGE := $(shell docker images -q opsdocker.ziggurat.cn/baas/remix-ide:latest)
+REMIX-IDE-CONTAINER := $(shell docker ps -a | grep remix-ide | awk '{print $1}')
 
 stop:
-	@docker stop remix-ide || true
-	@docker rm remix-ide || true
+ifneq ($(strip $(REMIX-IDE-CONTAINER)),)
+	@docker stop $(REMIX-IDE-CONTAINER)
+	@docker rm $(REMIX-IDE-CONTAINER)
+else
+	@echo $(GREEN)"No containers need to be clean...."
+endif
 
 start:
 ifneq ($(strip $(REMIX-IDE-IMAGE)),)
