@@ -1,8 +1,12 @@
+REMIX-IDE-IMAGE := $(shell docker images -q opsdocker.ziggurat.cn/baas/remix-ide:latest)
+
 stop:
 	@docker stop remix-ide || true
 	@docker rm remix-ide || true
 
 start:
-	@docker rmi opsdocker.ziggurat.cn/baas/remix-ide
+ifneq ($(strip $(REMIX-IDE-IMAGE)),)
+	@docker rmi $(REMIX-IDE-IMAGE)
+endif
 	@docker build -t opsdocker.ziggurat.cn/baas/remix-ide .
 	@docker run -d -p 9080:9080 --name remix-ide opsdocker.ziggurat.cn/baas/remix-ide
