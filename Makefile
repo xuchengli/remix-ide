@@ -1,7 +1,7 @@
 GREEN := $(shell tput -Txterm setaf 2)
 
 REMIX-IDE-IMAGE := $(shell docker images -q opsdocker.ziggurat.cn/baas/remix-ide:latest)
-REMIX-IDE-CONTAINER := $(shell docker ps -a | grep remix-ide | awk '{print $1}')
+REMIX-IDE-CONTAINER := $(shell docker ps -a | grep remix-ide | awk '{print $$1}')
 
 stop:
 ifneq ($(strip $(REMIX-IDE-CONTAINER)),)
