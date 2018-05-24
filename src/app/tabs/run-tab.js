@@ -66,9 +66,39 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
 
   // DROPDOWN
   var selectExEnv = el.querySelector('#selectExEnvOptions')
+  function setFinalContext () {
+    // set the final context. Cause it is possible that this is not the one we've originaly selected
+    selectExEnv.value = executionContext.getProvider()
+    fillAccountsList(appAPI, opts, el)
+    event.trigger('clearInstance', [])
+  }
   selectExEnv.addEventListener('change', function (evt) {
     let endpoint = selectExEnv.options[selectExEnv.selectedIndex].value
-    setNetwork(endpoint, appAPI, opts, el, event)
+    let context = selectExEnv.options[selectExEnv.selectedIndex].value
+    if (evt.target.value !== 'vm' && evt.target.value !== 'web3') {
+      setNetwork(endpoint, appAPI, opts, el, event)
+      console.log(evt.target.value)
+    } else {
+      executionContext.executionContextChange(context, null, () => {
+        modalDialogCustom.confirm(null, 'Are you sure you want to connect to an ethereum node?', () => {
+          modalDialogCustom.prompt(null, 'Web3 Provider Endpoint', 'http://localhost:8545', (target) => {
+            executionContext.setProviderFromEndpoint(target, context, (alertMsg) => {
+              if (alertMsg) {
+                modalDialogCustom.alert(alertMsg)
+              }
+              setFinalContext()
+            })
+          }, setFinalContext)
+        }, setFinalContext)
+      }, (alertMsg) => {
+        modalDialogCustom.alert(alertMsg)
+      }, setFinalContext)
+      // selectExEnv.value = executionContext.getProvider()
+      // executionContext.event.register('contextChanged', (context, silent) => {
+      //   setFinalContext()
+      // })
+      fillAccountsList(appAPI, opts, el)
+    };
   })
   // --------------- baas -----------------
   fillEnvironmentList(appAPI, opts, el, event)
@@ -145,7 +175,10 @@ function fillEnvironmentList (appAPI, opts, el, event) {
           $(selectExEnv).empty()
           for (let e of env) {
             $(selectExEnv).append($('<option />').val(e.httpRPC).text(e.network))
+            console.log(456)
           }
+          $('#selectExEnvOptions').prepend('<option id="vm-mode" title="Execution environment does not connect to any node, everything is local and in memory only." value="vm" checked="checked" name="executionContext">JavaScript VM</option>')
+          $('#selectExEnvOptions').append('<option id="web3-mode"title="Execution environment connects to node at localhost (or via IPC if available), transactions will be sent to the network and can cause loss of money or worse!If this page is served via https and you access your node via http, it might not work. In this case, try cloning the repository and serving it via http." value="web3" name="executionContext">Web3 Provider</option>')
           setNetwork(env[0].httpRPC, appAPI, opts, el, event)
         } else {
           modalDialogCustom.alert('Need to join network first.')
