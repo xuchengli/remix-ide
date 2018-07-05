@@ -7,7 +7,8 @@ COPY . /usr/app/src
 WORKDIR /usr/app/src
 
 RUN npm install && npm cache clean --force
-RUN npm run setupremix && npm run build
+# RUN npm run setupremix && npm run build
+RUN npm run setup_old_remix && npm run build
 
 EXPOSE 9080
 CMD ["npm", "start"]
