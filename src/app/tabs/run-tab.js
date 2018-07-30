@@ -160,7 +160,7 @@ function fillEnvironmentList (appAPI, opts, el, event) {
   const selectExEnv = el.querySelector('#selectExEnvOptions')
   if (apiToken) {
     request({
-      url: 'https://api-baas.zhigui.com/v1/public-chain/list',
+      url: 'http://120.92.100.153/v1/public-chain/list',
       headers: {
         'Authorization': `Bearer ${apiToken}`
       },
