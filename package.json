@@ -142,11 +142,12 @@
   },
   "scripts": {
     "setupremix": "npm run pullremix && npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity;",
-    "setup_old_remix": "npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity;",
+    "setup_old_remix": "npm run linkremixcore && npm run linkremixlib && npm run linkremixsolidity && npm run linkremixd;",
     "pullremix": "git clone https://github.com/ethereum/remix",
     "linkremixcore": "cd node_modules && rm -rf remix-core && ln -s ../remix/remix-core remix-core && cd ..",
     "linkremixlib": "cd node_modules && rm -rf remix-lib && ln -s ../remix/remix-lib remix-lib && cd ..",
     "linkremixsolidity": "cd node_modules && rm -rf remix-solidity && ln -s ../remix/remix-solidity remix-solidity && cd ..",
+    "linkremixd": "cd node_modules && rm -rf remixd && ln -s ../remixd remixd && cd ..",
     "build": "browserify src/index.js -o build/build/app.js && cp index.html build && cp -r assets build",
     "build_debugger": "browserify src/app/debugger/remix-debugger/index.js -o src/app/debugger/remix-debugger/build/app.js",
     "browsertest": "sleep 5 && npm run nightwatch_local",
