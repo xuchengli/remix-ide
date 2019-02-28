@@ -100,7 +100,7 @@ function runTab (appAPI = {}, appEvents = {}, opts = {}) {
       fillAccountsList(appAPI, opts, el)
     };
   })
-  // --------------- baas -----------------
+  // --------------- yao -----------------
   fillEnvironmentList(appAPI, opts, el, event)
   setInterval(() => {
     updateAccountBalances(container, appAPI)
@@ -153,14 +153,14 @@ function setNetwork (endpoint, appAPI, opts, el, event) {
   })
 }
 /**
- * 从baas获取当前用户接入的测试网络
+ * 从yao获取当前用户接入的测试网络
 **/
 function fillEnvironmentList (appAPI, opts, el, event) {
   const apiToken = appAPI.getAPIToken()
   const selectExEnv = el.querySelector('#selectExEnvOptions')
   if (apiToken) {
     request({
-      url: 'https://api.baas.com/v1/public-chain/list',
+      url: 'https://api.yao.dev/v1/public-chain/list',
       headers: {
         'Authorization': `Bearer ${apiToken}`
       },
@@ -184,7 +184,7 @@ function fillEnvironmentList (appAPI, opts, el, event) {
           modalDialogCustom.alert('Need to join network first.')
         }
       } else {
-        modalDialogCustom.alert(`BaaS load error: ${err || body.message}`)
+        modalDialogCustom.alert(`Yao load error: ${err || body.message}`)
       }
     })
   } else {
