@@ -9,3 +9,4 @@ package-lock.json
 remix
 .DS_Store
 contracts
+remixd

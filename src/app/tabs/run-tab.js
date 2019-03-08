@@ -184,11 +184,11 @@ function fillEnvironmentList (appAPI, opts, el, event) {
           modalDialogCustom.alert('Need to join network first.')
         }
       } else {
-        modalDialogCustom.alert(`BaaS load error: ${err || body.message}`)
+        window.location.href = '/error';
       }
     })
   } else {
-    modalDialogCustom.alert('Need API token.')
+    window.location.href = '/error';
   }
 }
 /**
